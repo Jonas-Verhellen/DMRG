@@ -3,7 +3,7 @@ using SparseArrays
 using KrylovKit
 
 # Algorithm Parameters
-sites = 100;
+sites = 10;
 max_eigenvalues = 10;
 J, Jz = 1.0, 1.0;
 
@@ -29,8 +29,8 @@ function add_site!(J::Float64, Jz::Float64, block::DMRG_block)
 end
 
 function superblock_hamiltonian(J::Float64, Jz::Float64, block::DMRG_block)
-	return Jz*(kron(block.H, block.Id) + kron(block.Id, block.H) + kron(block.Sz , block.Sz))
-	 	   + (J/2)*(kron(block.Sp, block.Sm) + kron(block.Sm, block.Sp))
+	return Jz*(kron(block.H, block.Id) + kron(block.Id, block.H) + kron(block.Sz , block.Sz)) +
+	 	   (J/2)*(kron(block.Sp, block.Sm) + kron(block.Sm, block.Sp))
 end
 
 function entanglement(eigenvalues::Array{Float64,1})
@@ -77,6 +77,7 @@ function DMRG(sites::Int64, max_eigenvalues::Int64, J::Float64, Jz::Float64)
 		map(x -> truncation_operator'*x*truncation_operator, [block.H, block.Sz, block.Sp, block.Sm, block.Id])
 
 		#  Print information about current step
+		previous_energy = energy
  		@show energy, energy_per_bond, entanglement_entropy, truncation_error
 	end
 
